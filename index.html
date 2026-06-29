@@ -24,6 +24,26 @@
             width: 90%;
             max-width: 400px;
         }
+        .linkedin-logo {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+        }
+        h2 {
+            margin: 0 0 10px 0;
+            font-size: 22px;
+            color: #191919;
+        }
+        .instructions {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.4;
+            margin: 0 0 20px 0;
+        }
+        .highlight {
+            color: #0073b1;
+            font-weight: 600;
+        }
         .post-preview {
             text-align: left;
             background: #f8f9fa;
@@ -32,16 +52,16 @@
             border: 1px solid #e0e0e0;
             font-size: 14px;
             line-height: 1.5;
-            white-space: pre-wrap; /* This preserves your line breaks in the preview */
+            white-space: pre-wrap;
             margin-bottom: 25px;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
         }
         .share-button {
-            background-color: #0073b1; /* LinkedIn Blue */
+            background-color: #0073b1;
             color: #ffffff;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 16px;
             font-weight: 600;
             border-radius: 24px;
@@ -50,6 +70,9 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
         }
         .share-button:hover {
             background-color: #005582;
@@ -62,52 +85,5 @@
 <body>
 
     <div class="share-card">
-        <h2>Your Post is Ready</h2>
-        <p style="color: #666; margin-bottom: 20px;">Review your text below and click the button to share it natively on LinkedIn.</p>
-        
-        <div id="postPreview" class="post-preview"></div>
-
-        <button id="shareButton" class="share-button">
-            Share on LinkedIn
-        </button>
-    </div>
-
-    <script>
-        // 1. Fetch the formatted text from the URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const postText = urlParams.get('text');
-
-        // 2. Display the text in the preview box
-        if (postText) {
-            document.getElementById('postPreview').innerText = postText;
-        } else {
-            document.getElementById('postPreview').innerText = "No text provided in the link.";
-            document.getElementById('shareButton').style.display = 'none';
-        }
-
-        // 3. Native Web Share API integration
-        const shareButton = document.getElementById('shareButton');
-
-        shareButton.addEventListener('click', async () => {
-            // Check if the browser supports native sharing (all modern mobile browsers do)
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Share to LinkedIn',
-                        text: postText
-                        // We are sharing 'text' not a 'url', so LinkedIn opens the post composer.
-                    });
-                    console.log('Successfully shared');
-                } catch (error) {
-                    console.log('Error sharing:', error);
-                }
-            } else {
-                // Fallback for desktop/unsupported browsers (just opens the web sharing endpoint)
-                const fallbackUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(postText);
-                window.open(fallbackUrl, '_blank');
-            }
-        });
-    </script>
-
-</body>
-</html>
+        <svg class="linkedin-logo" viewBox="0 0 24 24" fill="#0073b1">
+            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1
