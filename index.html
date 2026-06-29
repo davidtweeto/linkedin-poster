@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening LinkedIn...</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f6f8;
+            color: #191919;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            max-width: 400px;
+            width: 90%;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 115, 177, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #0073b1;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        a {
+            color: #0073b1;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const text = urlParams.get('text');
+            
+            if (text) {
+                // Official LinkedIn mobile-friendly sharing endpoint
+                const linkedinUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(text);
+                
+                // Set up the fallback link on the page just in case
+                document.getElementById('manual-link').href = linkedinUrl;
+                
+                // Redirect straight away
+                window.location.href = linkedinUrl;
+            } else {
+                document.getElementById('status-text').innerText = "No text provided to share.";
+                document.getElementById('spinner').style.display = 'none';
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div id="spinner" class="spinner"></div>
+        <p id="status-text">Opening your post in LinkedIn...</p>
+        <p style="font-size: 14px; color: #666;">
+            If the app didn't open automatically, <a id="manual-link" href="#">click here to post</a>.
+        </p>
+    </div>
+
+</body>
+</html>
