@@ -47,39 +47,33 @@
             100% { transform: rotate(360deg); }
         }
     </style>
-    <script>
+        <script>
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const text = urlParams.get('text');
             
             if (text) {
-                // Encode text cleanly for a native intent
-                const safeText = encodeURIComponent(text);
+                const encodedText = encodeURIComponent(text);
                 
-                // Native Deep Link Schemes for LinkedIn Post Composer
-                const nativeAppUrl = "linkedin://shareAndroid?text=" + safeText;
-                const iosAppUrl = "linkedin://share?text=" + safeText;
-                const fallbackWebUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" + safeText;
+                // 1. Android Specific Intent (Forces WhatsApp's browser to launch the native LinkedIn App)
+                const androidIntent = "intent://share?text=" + encodedText + "#Intent;scheme=linkedin;package=com.linkedin.android;S.browser_fallback_url=https%3A%2F%2Fwww.linkedin.com%2Ffeed%2F%3FshareActive%3Dtrue%26text%3D" + encodedText + ";end";
+                
+                // 2. iOS Universal Link Direct Parameter
+                const iosUrl = "https://www.linkedin.com/feed/?shareActive=true&text=" + encodedText;
     
-                // Detect Operating System
+                // Detect user platform
                 const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                let targetUrl = nativeAppUrl;
+                let targetUrl = iosUrl;
     
-                if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                    targetUrl = iosAppUrl;
+                if (/android/i.test(userAgent)) {
+                    targetUrl = androidIntent;
                 }
     
-                // Attempt to force open the native app immediately
+                // Route immediately
                 window.location.href = targetUrl;
                 
-                // Set the fallback button link on the page in case the native jump is blocked
-                document.getElementById('manual-link').href = fallbackWebUrl;
-    
-                // Fallback timeout: If the app doesn't open in 1.5 seconds, send them to the web version
-                setTimeout(function() {
-                    window.location.href = fallbackWebUrl;
-                }, 1500);
-    
+                // Assign fallback to button just in case
+                document.getElementById('manual-link').href = iosUrl;
             } else {
                 document.getElementById('status-text').innerText = "No text provided to share.";
                 document.getElementById('spinner').style.display = 'none';
