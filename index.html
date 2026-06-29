@@ -50,20 +50,36 @@
     <script>
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            let text = urlParams.get('text');
+            const text = urlParams.get('text');
             
             if (text) {
-                // Fix: Force double encoding on line breaks so LinkedIn doesn't strip them
-                text = text.replace(/\n/g, '\r\n');
+                // Encode text cleanly for a native intent
+                const safeText = encodeURIComponent(text);
                 
-                // Official LinkedIn mobile-friendly sharing endpoint
-                const linkedinUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(text);
+                // Native Deep Link Schemes for LinkedIn Post Composer
+                const nativeAppUrl = "linkedin://shareAndroid?text=" + safeText;
+                const iosAppUrl = "linkedin://share?text=" + safeText;
+                const fallbackWebUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" + safeText;
+    
+                // Detect Operating System
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                let targetUrl = nativeAppUrl;
+    
+                if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                    targetUrl = iosAppUrl;
+                }
+    
+                // Attempt to force open the native app immediately
+                window.location.href = targetUrl;
                 
-                // Set up the fallback link on the page just in case
-                document.getElementById('manual-link').href = linkedinUrl;
-                
-                // Redirect straight away
-                window.location.href = linkedinUrl;
+                // Set the fallback button link on the page in case the native jump is blocked
+                document.getElementById('manual-link').href = fallbackWebUrl;
+    
+                // Fallback timeout: If the app doesn't open in 1.5 seconds, send them to the web version
+                setTimeout(function() {
+                    window.location.href = fallbackWebUrl;
+                }, 1500);
+    
             } else {
                 document.getElementById('status-text').innerText = "No text provided to share.";
                 document.getElementById('spinner').style.display = 'none';
