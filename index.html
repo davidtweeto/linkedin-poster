@@ -50,9 +50,12 @@
     <script>
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const text = urlParams.get('text');
+            let text = urlParams.get('text');
             
             if (text) {
+                // Fix: Force double encoding on line breaks so LinkedIn doesn't strip them
+                text = text.replace(/\n/g, '\r\n');
+                
                 // Official LinkedIn mobile-friendly sharing endpoint
                 const linkedinUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(text);
                 
